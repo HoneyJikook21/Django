@@ -1,0 +1,166 @@
+>>> from News.models import *
+
+1.Создать двух пользователей
+>>> u1 = User.objects.create_user(username='Kate')
+>>> u1
+<User: Kate>
+>>> u2 = User.objects.create_user(username='Alex')
+
+2.Создать два объекта модели Author
+>>> Author.objects.create(authorUser=u1) 
+<Author: Author object (1)>
+>>> Author.objects.create(authorUser=u2) 
+<Author: Author object (2)>
+
+3.Добавить 4 категории в модель Category.
+>>> Category.objects.create(name='Literature')
+<Category: Category object (1)>
+>>> Category.objects.create(name='Music')      
+<Category: Category object (2)>
+>>> Category.objects.create(name='History')    
+<Category: Category object (3)>
+>>> Category.objects.create(name='Politics')   
+<Category: Category object (4)>
+
+4. Добавить 2 статьи и 1 новость.
+>>> author = Author.objects.get(id=1) 
+>>> author
+<Author: Author object (1)>
+>>> Post.objects.create(author=author,categoryType='NW', title='Classic Books',text='Everyone loves to read novels but where to start with?')
+<Post: Post object (1)>
+>>> Post.objects.get(id=1).title
+'Classic Books'
+
+5. Присвоить им категории
+>>> Post.objects.get(id=1).postCategory.add(Category.objects.get(id=1) 
+
+6. Создать комментарии
+>>> Comment.objects.create(commentPost=Post.objects.get(id=1), commentUser=Author.objects.get(id=1).authorUser,text='I prefer Russian Classics Books like Pushkin') 
+<Comment: Comment object (1)>
+
+7. Применять функции like() и dislike() к статьям/новостям и комментариям
+>>> Comment.objects.get(id=1).like()
+>>> Comment.objects.get(id=1).rating
+1
+>>> Comment.objects.get(id=1).like() 
+>>> Comment.objects.get(id=1).like()
+>>> Comment.objects.get(id=1).like()
+>>> Comment.objects.get(id=1).like()
+>>> Comment.objects.get(id=1).dislike() 
+>>> Comment.objects.get(id=1).rating    
+4
+
+8. Обновить рейтинги пользователей.
+>>> Author.objects.get(id=1)
+<Author: Author object (1)>
+>>> a = Author.objects.get(id=1)
+>>> a.update_rating()
+>>> a.ratingAuthor
+4
+>>> Post.objects.get(id=1).like()
+>>> a.update_rating()             
+>>> a.ratingAuthor                
+7
+
+***те же пункты с другим автором и постами***
+
+
+>>> Author.objects.get(authorUser_id=2)  
+<Author: Author object (2)>
+>>> author2 = Author.objects.get(authorUser_id=2)
+>>> Post.objects.create(author=author2, categoryType='AR', title='Historical Books', text='In this article you can see books from different centuries') 
+<Post: Post object (2)>
+>>> Post.objects.get(id=2).postCategory.add(Category.objects.get(id=1)  
+>>> Post.objects.get(id=2).postCategory.add(Category.objects.get(id=3) 
+>>> Comment.objects.create(commentPost=Post.objects.get(id=2), commentUser=Author.objects.get(id=2).authorUser,text='Thank you. It really help me in studying!')    
+<Comment: Comment object (2)>
+>>> Comment.objects.create(commentPost=Post.objects.get(id=2), commentUser=Author.objects.get(id=2).authorUser,text='I read the most of them but still its great article!')
+<Comment: Comment object (3)>
+>>> Comment.objects.get(id=2).like() 
+>>> Comment.objects.get(id=2).like()
+>>> Comment.objects.get(id=2).like()
+>>> Comment.objects.get(id=2).like()
+>>> Comment.objects.get(id=2).like()
+>>> Comment.objects.get(id=2).dislike() 
+>>> Comment.objects.get(id=3).dislike() 
+>>> Comment.objects.get(id=3).dislike()
+>>> Comment.objects.get(id=3).dislike()
+>>> Comment.objects.get(id=3).like()    
+>>> Comment.objects.get(id=2).rating 
+4
+>>> Comment.objects.get(id=3).rating  
+-2
+>>> Post.objects.get(id=2).like() 
+>>> Post.objects.get(id=1).like()
+>>> Post.objects.get(id=1).like()
+>>> Post.objects.get(id=1).like()
+>>> Post.objects.get(id=1).like()
+>>> Post.objects.get(id=1).like()
+>>> Post.objects.get(id=1).like()
+>>> Post.objects.get(id=2).like() 
+>>> Post.objects.get(id=2).like()
+>>> Post.objects.get(id=2).like()
+>>> Post.objects.get(id=2).like()
+>>> Post.objects.get(id=2).like()
+>>> Post.objects.get(id=2).dislike() 
+>>> c = Author.objects.get(id=2) 
+>>> c.update_rating() 
+>>> c.ratingAuthor
+25                               
+>>> Post.objects.create(author=auth, categoryType='AR', title='Presidents of USA', text='We will name all presidents of USA in this article. Stay with us to know more') 
+<Post: Post object (3)>
+>>> Post.objects.get(id=3).postCategory.add(Category.objects.get(id=4) 
+>>> Post.objects.get(id=2).postCategory.add(Category.objects.get(id=3)
+>>> Comment.objects.create(commentPost=Post.objects.get(id=3), commentUser=Author.objects.get(id=2).authorUser,text='Isnt it famous information?')                
+<Comment: Comment object (4)>
+>>> Comment.objects.get(id=4).like() 
+>>> Comment.objects.get(id=4).like()
+>>> Comment.objects.get(id=4).like()
+>>> Comment.objects.get(id=4).dislike() 
+>>> Comment.objects.get(id=4).dislike()
+>>> Comment.objects.get(id=4).dislike()
+>>> Comment.objects.get(id=4).dislike()
+>>> Comment.objects.get(id=4).dislike()
+>>> c.update_rating() 
+>>> Post.objects.get(id=3).like() 
+>>> Post.objects.get(id=3).like()
+>>> Post.objects.get(id=3).like()
+>>> Post.objects.get(id=3).like()
+>>> Post.objects.get(id=3).dislike()
+>>> c.update_rating()
+>>> c.ratingAuthor 
+27
+
+9. Вывести username и рейтинг лучшего пользователя (применяя сортировку и возвращая поля первого объекта).
+
+>>> a = Author.objects.order_by('-ratingAuthor')[:1]
+>>> a
+<QuerySet [<Author: Author object (1)>]>
+>>> a = Author.objects.order_by('-ratingAuthor')
+>>> a
+<QuerySet [<Author: Author object (1)>, <Author: Author object (2)>, <Author: Author object (3)>]>
+>>> for i in a:
+... i.ratingAuthor
+... i.authorUser.username
+...
+1
+'Alex'
+
+10. Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье.
+Post.objects.order_by()                                                                                                    
+<QuerySet [<Post: Post object (1)>, <Post: Post object (2)>, <Post: Post object (3)>]>
+>>> o = Post.objects.order_by()                                                                                               
+>>> o = Post.objects.order_by('-rating').values('dateCreation',author__authorUser__User','rating','title','comment','text')[0]                            
+>>> o
+{'dateCreation': datetime.datetime(2023, 2, 2, 18, 11, 8, 95809, tzinfo=datetime.timezone.utc),'author_authorUser_User': Kate, 'rating': 7, 'title': 'Classic Books', 'comment': 1, 'text': 'Everyone loves to read nov
+els but where to start with?'}
+>>>
+
+11.Вывести все комментарии (дата, пользователь, рейтинг, текст) к этой статье.
+>>> p = Post.objects.get(id=1) 
+>>> p
+<Post: Post object (1)>
+>>> p.comment_set.all().values('dateCreation','commentUser','rating','text')
+<QuerySet [{'dateCreation': datetime.datetime(2023, 2, 2, 18, 17, 27, 510903, tzinfo=datetime.timezone.utc), 'commentUser': 1, 'rating': 4, 'text': 'I prefer Russian Classics Books lik
+e Pushkin'}]>
+
